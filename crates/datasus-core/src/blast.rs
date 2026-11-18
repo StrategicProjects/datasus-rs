@@ -40,6 +40,9 @@ pub enum BlastError {
     DistanceTooFar,
     /// Invalid Huffman code (cannot happen with the fixed tables; code -9).
     BadCode,
+    /// The output reached the caller's limit (`blast()` code 1, its output
+    /// error).  The output holds exactly the limit's worth of bytes.
+    OutputLimit,
 }
 
 impl BlastError {
@@ -50,6 +53,7 @@ impl BlastError {
             BlastError::BadDictSize => -2,
             BlastError::DistanceTooFar => -3,
             BlastError::BadCode => -9,
+            BlastError::OutputLimit => 1,
         }
     }
 }
@@ -173,11 +177,16 @@ impl State<'_> {
     }
 }
 
-/// Decompress a PKWare DCL stream from `input`, appending to `out`.
+/// Decompress a PKWare DCL stream from `input`, appending at most `max_out`
+/// bytes to `out`.
+///
+/// The format can expand a few bytes into hundreds, so untrusted input
+/// needs a bound: when the stream would produce more than `max_out` bytes,
+/// decompression stops with [`BlastError::OutputLimit`].
 ///
 /// Input after the end code is ignored.  On error, `out` holds whatever was
 /// decompressed so far.
-pub fn blast(input: &[u8], out: &mut Vec<u8>) -> Result<(), BlastError> {
+pub fn blast(input: &[u8], out: &mut Vec<u8>, max_out: usize) -> Result<(), BlastError> {
     let litcode = construct(&LITLEN);
     let lencode = construct(&LENLEN);
     let distcode = construct(&DISTLEN);
@@ -212,6 +221,9 @@ pub fn blast(input: &[u8], out: &mut Vec<u8>) -> Result<(), BlastError> {
                 return Err(BlastError::DistanceTooFar);
             }
 
+            let room = max_out - produced;
+            let over = len > room;
+            let len = len.min(room);
             let from = out.len() - dist;
             if dist >= len {
                 out.extend_from_within(from..from + len);
@@ -223,8 +235,14 @@ pub fn blast(input: &[u8], out: &mut Vec<u8>) -> Result<(), BlastError> {
                     out.push(b);
                 }
             }
+            if over {
+                return Err(BlastError::OutputLimit);
+            }
         } else {
             let symbol = if lit != 0 { s.decode(&litcode)? as u32 } else { s.bits(8)? };
+            if out.len() - start >= max_out {
+                return Err(BlastError::OutputLimit);
+            }
             out.push(symbol as u8);
         }
     }
@@ -240,17 +258,29 @@ mod tests {
         // From the header comment of blast.c.
         let input = [0x00, 0x04, 0x82, 0x24, 0x25, 0x8f, 0x80, 0x7f];
         let mut out = Vec::new();
-        blast(&input, &mut out).unwrap();
+        blast(&input, &mut out, usize::MAX).unwrap();
         assert_eq!(out, b"AIAIAIAIAIAIA");
+    }
+
+    #[test]
+    fn output_limit() {
+        let input = [0x00, 0x04, 0x82, 0x24, 0x25, 0x8f, 0x80, 0x7f];
+        for max in [0, 1, 2, 5, 12] {
+            let mut out = Vec::new();
+            assert_eq!(blast(&input, &mut out, max), Err(BlastError::OutputLimit));
+            assert_eq!(out, &b"AIAIAIAIAIAIA"[..max]);
+        }
+        let mut out = Vec::new();
+        assert_eq!(blast(&input, &mut out, 13), Ok(()));
     }
 
     #[test]
     fn errors() {
         let mut out = Vec::new();
-        assert_eq!(blast(&[], &mut out), Err(BlastError::OutOfInput));
-        assert_eq!(blast(&[2, 4], &mut out), Err(BlastError::BadLiteralFlag));
-        assert_eq!(blast(&[0, 7], &mut out), Err(BlastError::BadDictSize));
-        assert_eq!(blast(&[0x00, 0x04, 0x82], &mut out), Err(BlastError::OutOfInput));
+        assert_eq!(blast(&[], &mut out, usize::MAX), Err(BlastError::OutOfInput));
+        assert_eq!(blast(&[2, 4], &mut out, usize::MAX), Err(BlastError::BadLiteralFlag));
+        assert_eq!(blast(&[0, 7], &mut out, usize::MAX), Err(BlastError::BadDictSize));
+        assert_eq!(blast(&[0x00, 0x04, 0x82], &mut out, usize::MAX), Err(BlastError::OutOfInput));
         assert_eq!(BlastError::OutOfInput.code(), 2);
     }
 }

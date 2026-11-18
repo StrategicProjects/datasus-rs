@@ -1,10 +1,10 @@
 name: Python release
 
-# Builds the datasuspy wheels on every run; publishes to PyPI only for tags
-# named py-v* (e.g. py-v0.1.0), through PyPI trusted publishing.
+# Builds the datasuspy wheels on every run; publishes to PyPI only for
+# version tags (e.g. v0.1.0), through PyPI trusted publishing.
 on:
   push:
-    tags: ["py-v*"]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -80,7 +80,7 @@ jobs:
       - run: pytest crates/datasus-py/tests
 
   publish:
-    if: startsWith(github.ref, 'refs/tags/py-v')
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: [wheels, sdist, test]
     runs-on: ubuntu-latest
     environment: pypi

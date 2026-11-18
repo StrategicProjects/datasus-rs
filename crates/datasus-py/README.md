@@ -1,5 +1,10 @@
 # datasuspy
 
+[![CI](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/datasuspy)](https://pypi.org/project/datasuspy/)
+[![DOI](https://zenodo.org/badge/1462245859.svg)](https://zenodo.org/badge/latestdoi/1462245859)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/StrategicProjects/datasus-rs/blob/main/LICENSE)
+
 Fast reader for DATASUS `.dbc` files (and plain `.dbf`), returning
 [Apache Arrow](https://arrow.apache.org/) tables. The reader is written in
 Rust and shares its core with the

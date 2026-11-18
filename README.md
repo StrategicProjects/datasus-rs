@@ -1,5 +1,10 @@
 # datasus-rs
 
+[![CI](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/datasuspy)](https://pypi.org/project/datasuspy/)
+[![DOI](https://zenodo.org/badge/1462245859.svg)](https://zenodo.org/badge/latestdoi/1462245859)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/StrategicProjects/datasus-rs/blob/main/LICENSE)
+
 Reader for DATASUS `.dbc` files (and plain `.dbf`) in Rust, shared by three
 front ends:
 
@@ -36,9 +41,11 @@ renamed on success; existing outputs need `--force`.
 ## Python
 
 ```sh
-cd crates/datasus-py
-maturin develop --release        # inside a virtualenv
+pip install datasuspy
 ```
+
+From source: `cd crates/datasus-py && maturin develop --release` inside a
+virtualenv.
 
 ```python
 import datasuspy
@@ -76,6 +83,9 @@ To fill your own buffers without an intermediate copy, implement
   as an integer (it is R's `NA`).
 - `D` fields are text unless `parse_dates` is set; invalid dates are null.
 - A header declaring more records than the file holds is a warning.
+- Decompression stops at the record count declared in the header and never
+  goes past 4 GiB (`decode_with_limit` changes the bound), so a crafted file
+  cannot expand without limit.
 
 Known differences from the C reader:
 

@@ -27,7 +27,7 @@ mod dbf;
 use std::fmt;
 use std::path::Path;
 
-pub use container::{decode, Container, DbfData};
+pub use container::{decode, decode_with_limit, Container, DbfData, DEFAULT_MAX_DECOMPRESSED};
 pub use dbf::{
     repair_names, ColType, ColumnData, Cursor, Encoding, Field, ReadOptions, Sink, Table,
 };
@@ -37,6 +37,8 @@ pub enum Error {
     Io(std::io::Error),
     /// PKWare DCL decompression failed; `code` is the `blast()` return code.
     Blast { code: i32, record_area: bool },
+    /// The file would decompress to more than the allowed size.
+    TooLarge { max_bytes: u64 },
     /// Decompression worked but the result is not a DBF file.
     NotDbf,
     /// The DBF header is invalid.
@@ -52,6 +54,9 @@ impl fmt::Display for Error {
             }
             Error::Blast { code, record_area: false } => {
                 write!(f, "Failed to decompress DBC with blast(); code={code}")
+            }
+            Error::TooLarge { max_bytes } => {
+                write!(f, "Decompressed data exceeds the limit of {max_bytes} bytes.")
             }
             Error::NotDbf => f.write_str(
                 "Decompression succeeded, but output does not look like a valid DBF file.",

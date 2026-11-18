@@ -301,6 +301,59 @@ fn whole_file_dbc() {
     assert_eq!(t.collect()[0], s(&["A", "B"]));
 }
 
+/// PKWare DCL stream that expands to `3 + 518 * copies` zero bytes: three
+/// literals, then maximum-length copies at distance 1.
+fn dcl_bomb(copies: usize) -> Vec<u8> {
+    let mut bits: Vec<u8> = Vec::new();
+    let mut push = |v: u32, n: u32| (0..n).for_each(|i| bits.push(((v >> i) & 1) as u8));
+    push(0, 8);
+    push(4, 8);
+    for _ in 0..3 {
+        push(0, 1);
+        push(b' ' as u32, 8);
+    }
+    for _ in 0..copies {
+        push(1, 1);
+        push(0, 7); // length symbol 15 (base 264, 8 extra bits)
+        push(254, 8); // 264 + 254 = 518
+        push(0b11, 2); // distance symbol 0
+        push(0, 4); // distance 1
+    }
+    push(1, 1);
+    push(0, 7);
+    push(0xFF, 8);
+    bits.chunks(8)
+        .map(|c| c.iter().enumerate().fold(0u8, |a, (i, b)| a | (b << i)))
+        .collect()
+}
+
+#[test]
+fn decompression_is_bounded() {
+    use datasus_core::{decode, decode_with_limit, Error};
+
+    // The bomb helper itself is a valid stream.
+    let mut out = Vec::new();
+    datasus_core::blast::blast(&dcl_bomb(4), &mut out, usize::MAX).unwrap();
+    assert_eq!(out, vec![b' '; 3 + 518 * 4]);
+
+    // DBC: the payload expands far beyond the one declared record, but only
+    // the declared record area (+ EOF marker) is decompressed.
+    let plain = make_dbf(&[F("X", b'C', 1, 0)], &[b" A"], None, None);
+    let dbc = [&plain[..65], &[0u8; 4][..], &dcl_bomb(2000)].concat();
+    let data = decode(dbc.clone()).unwrap();
+    assert_eq!(data.records().len(), 3);
+    assert_eq!(read(dbc, &opts()).collect()[0], s(&[""]));
+
+    // A header declaring more than the limit is refused once the limit is hit.
+    let mut big = make_dbf(&[F("X", b'C', 1, 0)], &[b" A"], Some(1_000_000), None);
+    big.truncate(65);
+    let dbc = [&big[..], &[0u8; 4][..], &dcl_bomb(2000)].concat();
+    assert!(matches!(decode_with_limit(dbc, 4096), Err(Error::TooLarge { max_bytes: 4096 })));
+
+    // Whole-file stream: bounded by the limit alone.
+    assert!(matches!(decode_with_limit(dcl_bomb(2000), 4096), Err(Error::TooLarge { .. })));
+}
+
 #[test]
 fn nul_padding_ends_the_value() {
     let f = [F("C", b'C', 4, 0), F("N", b'N', 4, 0)];
