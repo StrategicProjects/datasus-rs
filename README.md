@@ -1,6 +1,7 @@
 # datasus-rs
 
 [![CI](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/StrategicProjects/datasus-rs/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/datasus-cli)](https://crates.io/crates/datasus-cli)
 [![PyPI](https://img.shields.io/pypi/v/datasuspy)](https://pypi.org/project/datasuspy/)
 [![DOI](https://zenodo.org/badge/1462245859.svg)](https://zenodo.org/badge/latestdoi/1462245859)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/StrategicProjects/datasus-rs/blob/main/LICENSE)
@@ -24,8 +25,11 @@ of this project; they live in datasusr.
 ## CLI
 
 ```sh
-cargo install --path crates/datasus-cli
+brew install strategicprojects/tap/datasus     # Homebrew (macOS, Linux)
+cargo install datasus-cli                      # or with Cargo
+```
 
+```sh
 datasus convert RDPE2401.dbc                       # -> RDPE2401.parquet (zstd)
 datasus convert *.dbc --out-dir parquet/           # many files
 datasus convert RDPE2401.dbc -o rd.csv --select uf_zi,val_tot --n-max 1000
@@ -61,6 +65,11 @@ reader = datasuspy.open_dbc("RDPE2401.dbc", batch_size=100_000)
 ```
 
 ## Rust
+
+```sh
+cargo add datasus-core        # the reader, no dependencies
+cargo add datasus-arrow       # Arrow record batches
+```
 
 ```rust
 use datasus_core::{open, ReadOptions};

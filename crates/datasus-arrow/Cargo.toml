@@ -7,6 +7,9 @@ rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+readme = "../../README.md"
+keywords = ["datasus", "dbc", "dbf", "arrow"]
+categories = ["parser-implementations", "science"]
 
 [dependencies]
 datasus-core.workspace = true
