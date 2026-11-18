@@ -7,7 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/StrategicProjects/datasus-rs/blob/main/LICENSE)
 
 Reader for DATASUS `.dbc` files (and plain `.dbf`) in Rust, shared by three
-front ends:
+front ends. Site: <https://strategicprojects.github.io/datasus-rs/> (API
+reference under [`/api`](https://strategicprojects.github.io/datasus-rs/api/datasus_core/)).
 
 | Crate | What it is |
 |---|---|

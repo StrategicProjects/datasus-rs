@@ -8,3 +8,4 @@ __pycache__/
 .claude/scratch/
 dist/
 .pytest_cache/
+site/api/
