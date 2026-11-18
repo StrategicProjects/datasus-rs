@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" role="img" aria-label="Como o datasus-rs lê um arquivo: o DBC é um cabeçalho dBase seguido de uma área de registros comprimida; o núcleo descomprime e interpreta os registros, gravando cada valor num sink fornecido pela interface: lotes Arrow para a linha de comando e o Python, ou buffers seus.">
+  <style>
+    .box { fill: #ffffff; stroke: #d5e3ee; }
+    .box.key { fill: #eaf3ff; stroke: #a9c8f5; }
+    .box.out { fill: #e8f9f1; stroke: #a5e2c8; }
+    .lbl { fill: #0e1b2a; font-weight: 700; }
+    .sub { fill: #51667f; }
+    .tag { fill: #51667f; font-weight: 700; letter-spacing: .05em; }
+    .edge { fill: none; stroke: #93a9c2; stroke-width: 1.6; }
+    .tip { fill: #93a9c2; }
+    .hdr { fill: #a9c8f5; } .cmp { fill: #2fbf8f; } .rest { fill: #d5e3ee; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #142235; stroke: #26405c; }
+      .box.key { fill: #13294a; stroke: #2c5590; }
+      .box.out { fill: #103227; stroke: #1e5c47; }
+      .lbl { fill: #e6eef7; } .sub, .tag { fill: #9bb2cb; }
+      .edge { stroke: #44607f; } .tip { fill: #44607f; }
+      .hdr { fill: #3d74c4; } .cmp { fill: #2fbf8f; } .rest { fill: #26405c; }
+    }
+    text { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  </style>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path class="tip" d="M0,0 L7,3.5 L0,7 z"/>
+    </marker>
+  </defs>
+
+  <text class="tag" x="24" y="30" font-size="11">1 · ARQUIVO</text>
+  <rect class="box" x="24" y="42" width="200" height="216" rx="12"/>
+  <text class="lbl" x="40" y="70" font-size="13">.dbc do DATASUS</text>
+  <rect class="hdr" x="40" y="86" width="168" height="26" rx="5"/>
+  <text class="lbl" x="50" y="103" font-size="11">cabeçalho dBase III</text>
+  <rect class="cmp" x="40" y="118" width="168" height="84" rx="5"/>
+  <text x="50" y="138" font-size="11" font-weight="700" fill="#06281d">área de registros,</text>
+  <text x="50" y="153" font-size="11" font-weight="700" fill="#06281d">PKWare DCL "implode"</text>
+  <text class="sub" x="40" y="224" font-size="11">Um .dbf simples é lido</text>
+  <text class="sub" x="40" y="239" font-size="11">do mesmo jeito.</text>
+
+  <path class="edge" d="M224,150 L270,150" marker-end="url(#a)"/>
+
+  <text class="tag" x="272" y="30" font-size="11">2 · DATASUS-CORE</text>
+  <rect class="box key" x="272" y="42" width="330" height="216" rx="12"/>
+  <rect class="box" x="288" y="60" width="298" height="50" rx="9"/>
+  <text class="lbl" x="302" y="81" font-size="13">Detectar o contêiner</text>
+  <text class="sub" x="302" y="98" font-size="11">DBC, DBC inteiro, DBF, DBF truncado</text>
+  <rect class="box" x="288" y="124" width="298" height="50" rx="9"/>
+  <text class="lbl" x="302" y="145" font-size="13">Descomprimir (blast)</text>
+  <text class="sub" x="302" y="162" font-size="11">para no tamanho que o cabeçalho declara</text>
+  <rect class="box" x="288" y="188" width="298" height="54" rx="9"/>
+  <text class="lbl" x="302" y="209" font-size="13">Interpretar os registros</text>
+  <text class="sub" x="302" y="226" font-size="11">tipos, espaços, datas, apagados, n_max</text>
+  <path class="edge" d="M437,110 L437,122" marker-end="url(#a)"/>
+  <path class="edge" d="M437,174 L437,186" marker-end="url(#a)"/>
+
+  <path class="edge" d="M602,150 L650,150" marker-end="url(#a)"/>
+  <text class="sub" x="606" y="140" font-size="11">Sink</text>
+
+  <text class="tag" x="652" y="30" font-size="11">3 · INTERFACE</text>
+  <rect class="box out" x="652" y="42" width="284" height="60" rx="12"/>
+  <text class="lbl" x="668" y="67" font-size="13">datasus (linha de comando)</text>
+  <text class="sub" x="668" y="85" font-size="11">lotes Arrow → Parquet, CSV</text>
+  <rect class="box out" x="652" y="112" width="284" height="60" rx="12"/>
+  <text class="lbl" x="668" y="137" font-size="13">datasuspy (Python)</text>
+  <text class="sub" x="668" y="155" font-size="11">fluxo Arrow → pyarrow, polars, DuckDB</text>
+  <rect class="box out" x="652" y="182" width="284" height="76" rx="12"/>
+  <text class="lbl" x="668" y="207" font-size="13">Seu código</text>
+  <text class="sub" x="668" y="225" font-size="11">implemente Sink e os valores caem</text>
+  <text class="sub" x="668" y="240" font-size="11">em buffers que você alocou</text>
+</svg>

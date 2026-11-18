@@ -106,7 +106,8 @@ Known differences from the C reader:
   converts `latin1` strings as Windows-1252, so bytes `0x80`–`0x9F` come out
   differently there.
 - With `encoding = "utf-8"`, invalid sequences become U+FFFD.
-- Hexadecimal floats and `nan(...)`, accepted by `strtod()`, are null.
+- A numeric field holding `0x1A` or `nan(...)` is null: only decimal numbers are numbers. The C
+  reader reads them as numbers because `strtod()` accepts them. This does not occur in DATASUS files.
 
 ## Validation
 

@@ -48,6 +48,9 @@ Uma versão publicada não pode ser reutilizada em nenhum desses registros.
 
 - `site/` é a página estática (um `index.html` + `assets/how-it-works.svg`, sem build), nos moldes de
   `~/Github/foresight/site`. URL: https://strategicprojects.github.io/datasus-rs/.
+- Duas línguas: `site/index.html` (inglês) e `site/pt-BR/index.html` (português, com
+  `assets/how-it-works.pt-BR.svg`), ligadas pelo "PT"/"EN" do menu. São arquivos independentes: toda
+  mudança de conteúdo vai nas duas. A página pt-BR usa caminhos `../api/` e `../assets/`.
 - O workflow `pages.yml` roda a cada push no `main` que toque `site/`, o core ou o arrow: gera a referência
   com `cargo doc --no-deps -p datasus-core -p datasus-arrow` (com `RUSTDOCFLAGS=-D warnings`) em
   `site/api` (ignorado pelo git) e publica. O Pages do repositório precisa estar com source = GitHub Actions.
