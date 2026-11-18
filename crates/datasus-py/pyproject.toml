@@ -10,7 +10,14 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 license-files = ["LICENSE"]
 keywords = ["datasus", "dbc", "dbf", "sus", "arrow"]
-authors = [{ name = "André Leite" }]
+authors = [
+    { name = "André Leite", email = "leite@castlab.org" },
+    { name = "Marcos Wasiliew", email = "marcos.wasiliew@gmail.com" },
+    { name = "Hugo Vasconcelos", email = "hugo.vasconcelos@ufpe.br" },
+    { name = "Carlos Amorim", email = "carlos.agaf@ufpe.br" },
+    { name = "Diogo Bezerra", email = "diogo.bezerra@ufpe.br" },
+    { name = "Júlia Nascimento Barreto", email = "juliabarreto@gd.seplag.pe.gov.br" },
+]
 dependencies = ["pyarrow>=14"]
 dynamic = ["version"]
 classifiers = [

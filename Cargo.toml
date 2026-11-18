@@ -9,7 +9,14 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.80"
 license = "MIT"
-authors = ["André Leite"]
+authors = [
+    "André Leite <leite@castlab.org>",
+    "Marcos Wasiliew <marcos.wasiliew@gmail.com>",
+    "Hugo Vasconcelos <hugo.vasconcelos@ufpe.br>",
+    "Carlos Amorim <carlos.agaf@ufpe.br>",
+    "Diogo Bezerra <diogo.bezerra@ufpe.br>",
+    "Júlia Nascimento Barreto <juliabarreto@gd.seplag.pe.gov.br>",
+]
 repository = "https://github.com/StrategicProjects/datasus-rs"
 
 [workspace.dependencies]
