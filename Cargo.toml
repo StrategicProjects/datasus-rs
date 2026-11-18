@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["crates/datasus-core", "crates/datasus-arrow", "crates/datasus-cli", "crates/datasus-py"]
+# datasus-py is a Python extension module: build it with maturin, not cargo.
+default-members = ["crates/datasus-core", "crates/datasus-arrow", "crates/datasus-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT"
+authors = ["André Leite"]
+repository = "https://github.com/StrategicProjects/datasus-rs"
+
+[workspace.dependencies]
+datasus-core = { path = "crates/datasus-core", version = "0.1.0" }
+datasus-arrow = { path = "crates/datasus-arrow", version = "0.1.0" }
+arrow-array = "60"
+arrow-schema = "60"
+arrow-csv = "60"
+parquet = { version = "60", default-features = false, features = ["arrow", "zstd", "snap"] }
+clap = { version = "4.6", features = ["derive"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

@@ -1,0 +1,10 @@
+target/
+*.part
+.venv/
+__pycache__/
+*.so
+*.pyd
+.DS_Store
+.claude/scratch/
+dist/
+.pytest_cache/

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "datasuspy"
+description = "Fast reader for DATASUS .dbc/.dbf files, returning Apache Arrow tables"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+license-files = ["LICENSE"]
+keywords = ["datasus", "dbc", "dbf", "sus", "arrow"]
+authors = [{ name = "André Leite" }]
+dependencies = ["pyarrow>=14"]
+dynamic = ["version"]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Repository = "https://github.com/StrategicProjects/datasus-rs"
+Issues = "https://github.com/StrategicProjects/datasus-rs/issues"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.maturin]
+python-source = "python"
+module-name = "datasuspy._core"

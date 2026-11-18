@@ -1,0 +1,21 @@
+[package]
+name = "datasus-cli"
+description = "Command-line converter for DATASUS DBC/DBF files (Parquet, CSV, DBF)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "datasus"
+path = "src/main.rs"
+
+[dependencies]
+datasus-core.workspace = true
+datasus-arrow.workspace = true
+arrow-array.workspace = true
+arrow-csv.workspace = true
+parquet.workspace = true
+clap.workspace = true
